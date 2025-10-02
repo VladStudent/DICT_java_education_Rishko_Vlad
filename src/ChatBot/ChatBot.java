@@ -48,7 +48,16 @@ public class ChatBot {
         System.out.println("2. 10");
         System.out.println("3. 82");
         System.out.println("4. 8");
-
+        while (true) {
+            System.out.println("Answer");
+            int AnswerUser = consol.nextInt();
+            if (AnswerUser == 3) {
+                System.out.print("Goodbye, have a nice day! ");
+                break;
+            } else {
+                System.out.println("TRY AGAIN");
+            }
+        }
 
     }
 
