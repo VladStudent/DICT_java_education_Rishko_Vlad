@@ -1,14 +1,16 @@
 package Hangman;
 
 import java.util.Scanner;
+import java.util.Random;
 
 public class hangman {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+        String[] words = {"python", "java", "javascript", "kotlin"};
+        String secret = words[random.nextInt(words.length)];
+
         System.out.println("HANGMAN");
-
-        String secret = "python"; // фиксированное слово для этапа 2
-
         System.out.print("Guess the word: > ");
         String guess = scanner.nextLine();
 
