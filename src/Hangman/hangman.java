@@ -11,7 +11,14 @@ public class hangman {
         String secret = words[random.nextInt(words.length)];
 
         System.out.println("HANGMAN");
-        System.out.print("Guess the word: > ");
+
+        // формируем подсказку: первые 2 буквы, остальные дефисы
+        StringBuilder hint = new StringBuilder();
+        int reveal = Math.min(2, secret.length());
+        for (int i = 0; i < reveal; i++) hint.append(secret.charAt(i));
+        for (int i = reveal; i < secret.length(); i++) hint.append('-');
+
+        System.out.print("Guess the word " + hint.toString() + ": > ");
         String guess = scanner.nextLine();
 
         if (guess.equals(secret)) {
