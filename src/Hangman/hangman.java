@@ -1,8 +1,6 @@
 package Hangman;
 
-import java.util.Scanner;
-import java.util.Random;
-import java.util.Arrays;
+import java.util.*;
 
 public class hangman {
     public static void main(String[] args) {
@@ -14,11 +12,12 @@ public class hangman {
         char[] hidden = new char[secret.length()];
         Arrays.fill(hidden, '-');
 
-        int attempts = 8; // ровно 8 попыток ввода букв
+        Set<Character> revealed = new HashSet<>();
+        int lives = 8;
 
         System.out.println("HANGMAN");
 
-        while (attempts > 0) {
+        while (lives > 0) {
             System.out.println("\n" + new String(hidden));
             System.out.print("Input a letter: > ");
             String s = scanner.nextLine();
@@ -26,15 +25,22 @@ public class hangman {
             char c = s.charAt(0);
 
             if (secret.indexOf(c) >= 0) {
-                // открыть все вхождения
-                for (int i = 0; i < secret.length(); i++) {
-                    if (secret.charAt(i) == c) hidden[i] = c;
+                if (revealed.contains(c)) {
+                    System.out.println("No improvements");
+                    lives--; // по условию этапа 6: уменьшить попытку если повтор правильной буквы
+                } else {
+                    // открыть буквы
+                    for (int i = 0; i < secret.length(); i++) {
+                        if (secret.charAt(i) == c) {
+                            hidden[i] = c;
+                        }
+                    }
+                    revealed.add(c);
                 }
             } else {
                 System.out.println("That letter doesn't appear in the word");
+                lives--;
             }
-
-            attempts--; // упрощение: уменьшаем количество попыток после любого ввода
 
             if (new String(hidden).equals(secret)) {
                 System.out.println("\n" + new String(hidden));
@@ -44,7 +50,6 @@ public class hangman {
             }
         }
 
-        System.out.println("Thanks for playing!");
-        System.out.println("We'll see how well you did in the next stage");
+        System.out.println("You lost!");
     }
 }
