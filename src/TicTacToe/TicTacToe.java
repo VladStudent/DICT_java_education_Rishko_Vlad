@@ -7,14 +7,41 @@ public class TicTacToe {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter cells:");
         String input = sc.nextLine();
-
         char[][] field = new char[3][3];
-        for (int i = 0; i < 9; i++) {
-            field[i / 3][i % 3] = input.charAt(i);
-        }
+        for (int i = 0; i < 9; i++) field[i / 3][i % 3] = input.charAt(i);
 
         printField(field);
-        analyze(field);
+
+        while (true) {
+            System.out.println("Enter the coordinates:");
+            String x = sc.next();
+            String y = sc.next();
+
+            if (!x.matches("\\d+") || !y.matches("\\d+")) {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+            int a = Integer.parseInt(x);
+            int b = Integer.parseInt(y);
+
+            if (a < 1 || a > 3 || b < 1 || b > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+
+            int row = a - 1;
+            int col = b - 1;
+
+            if (field[row][col] != '_') {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
+            }
+
+            field[row][col] = 'X';
+            printField(field);
+            break;
+        }
     }
 
     static void printField(char[][] f) {
@@ -27,41 +54,5 @@ public class TicTacToe {
             System.out.println("|");
         }
         System.out.println("---------");
-    }
-
-    static void analyze(char[][] f) {
-        boolean xWins = win(f, 'X');
-        boolean oWins = win(f, 'O');
-        int countX = count(f, 'X');
-        int countO = count(f, 'O');
-        int empty = count(f, '_');
-
-        if ((xWins && oWins) || Math.abs(countX - countO) > 1) {
-            System.out.println("Impossible");
-        } else if (xWins) {
-            System.out.println("X wins");
-        } else if (oWins) {
-            System.out.println("O wins");
-        } else if (empty > 0) {
-            System.out.println("Game not finished");
-        } else {
-            System.out.println("Draw");
-        }
-    }
-
-    static boolean win(char[][] f, char c) {
-        for (int i = 0; i < 3; i++)
-            if ((f[i][0] == c && f[i][1] == c && f[i][2] == c) ||
-                    (f[0][i] == c && f[1][i] == c && f[2][i] == c)) return true;
-        return (f[0][0] == c && f[1][1] == c && f[2][2] == c) ||
-                (f[0][2] == c && f[1][1] == c && f[2][0] == c);
-    }
-
-    static int count(char[][] f, char c) {
-        int n = 0;
-        for (char[] row : f)
-            for (char x : row)
-                if (x == c) n++;
-        return n;
     }
 }
