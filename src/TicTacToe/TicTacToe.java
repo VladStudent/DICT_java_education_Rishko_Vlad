@@ -5,12 +5,14 @@ import java.util.Scanner;
 public class TicTacToe {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter cells:");
-        String input = sc.nextLine();
-        char[][] field = new char[3][3];
-        for (int i = 0; i < 9; i++) field[i / 3][i % 3] = input.charAt(i);
-
+        char[][] field = {
+                {' ', ' ', ' '},
+                {' ', ' ', ' '},
+                {' ', ' ', ' '}
+        };
         printField(field);
+
+        boolean xTurn = true;
 
         while (true) {
             System.out.println("Enter the coordinates:");
@@ -33,14 +35,21 @@ public class TicTacToe {
             int row = a - 1;
             int col = b - 1;
 
-            if (field[row][col] != '_') {
+            if (field[row][col] != ' ') {
                 System.out.println("This cell is occupied! Choose another one!");
                 continue;
             }
 
-            field[row][col] = 'X';
+            field[row][col] = xTurn ? 'X' : 'O';
             printField(field);
-            break;
+
+            String result = checkGame(field);
+            if (!result.equals("Game not finished")) {
+                System.out.println(result);
+                break;
+            }
+
+            xTurn = !xTurn;
         }
     }
 
@@ -54,5 +63,23 @@ public class TicTacToe {
             System.out.println("|");
         }
         System.out.println("---------");
+    }
+
+    static String checkGame(char[][] f) {
+        if (win(f, 'X')) return "X wins";
+        if (win(f, 'O')) return "O wins";
+        for (char[] row : f)
+            for (char c : row)
+                if (c == ' ') return "Game not finished";
+        return "Draw";
+    }
+
+    static boolean win(char[][] f, char c) {
+        for (int i = 0; i < 3; i++)
+            if ((f[i][0] == c && f[i][1] == c && f[i][2] == c) ||
+                    (f[0][i] == c && f[1][i] == c && f[2][i] == c))
+                return true;
+        return (f[0][0] == c && f[1][1] == c && f[2][2] == c) ||
+                (f[0][2] == c && f[1][1] == c && f[2][0] == c);
     }
 }
