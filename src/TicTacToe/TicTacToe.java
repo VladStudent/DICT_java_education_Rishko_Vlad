@@ -11,7 +11,7 @@ public class TicTacToe {
         game.printBoard();
 
         while (true) {
-            System.out.println("Enter the coordinates (row and column, e.g. 1 3):");
+            System.out.println("Enter the coordinates (row and column, for example: 1 3):");
             String input = scanner.nextLine();
 
             if (!game.processMove(input)) {
