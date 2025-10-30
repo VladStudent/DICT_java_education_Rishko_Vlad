@@ -3,138 +3,159 @@ package MatrixProcessing;
 import java.util.Scanner;
 
 public class MatrixProcessing {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
             printMenu();
-            System.out.print("Your choice: > ");
             int choice = scanner.nextInt();
-
-            if (choice == 0) {
-                break; // вихід
-            }
 
             switch (choice) {
                 case 1 -> addMatrices(scanner);
-                case 2 -> multiplyMatrixByConstant(scanner);
+                case 2 -> multiplyByConstant(scanner);
                 case 3 -> multiplyMatrices(scanner);
                 case 4 -> transposeMatrix(scanner);
-                default -> System.out.println("Invalid option, try again.");
+                case 5 -> calculateDeterminant(scanner);
+                case 0 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> System.out.println("Invalid option!");
             }
         }
     }
 
-
     private static void printMenu() {
-        System.out.println("1. Add matrices");
-        System.out.println("2. Multiply matrix by a constant");
-        System.out.println("3. Multiply matrices");
-        System.out.println("4. Transpose matrix");
-        System.out.println("0. Exit");
+        System.out.println("""
+                1. Add matrices
+                2. Multiply matrix by a constant
+                3. Multiply matrices
+                4. Transpose matrix
+                5. Calculate a determinant
+                0. Exit""");
+        System.out.print("Your choice: > ");
     }
 
-
+    // --- Addition ---
     private static void addMatrices(Scanner scanner) {
         System.out.print("Enter size of first matrix: > ");
-        int n1 = scanner.nextInt();
-        int m1 = scanner.nextInt();
-        System.out.println("Enter first matrix:");
-        double[][] A = readMatrix(scanner, n1, m1);
+        int r1 = scanner.nextInt();
+        int c1 = scanner.nextInt();
+        double[][] m1 = readMatrix(scanner, r1, c1, "first");
 
         System.out.print("Enter size of second matrix: > ");
-        int n2 = scanner.nextInt();
-        int m2 = scanner.nextInt();
-        System.out.println("Enter second matrix:");
-        double[][] B = readMatrix(scanner, n2, m2);
+        int r2 = scanner.nextInt();
+        int c2 = scanner.nextInt();
+        double[][] m2 = readMatrix(scanner, r2, c2, "second");
 
-        if (n1 != n2 || m1 != m2) {
+        if (r1 != r2 || c1 != c2) {
             System.out.println("The operation cannot be performed.");
             return;
         }
 
-        double[][] result = new double[n1][m1];
-        for (int i = 0; i < n1; i++)
-            for (int j = 0; j < m1; j++)
-                result[i][j] = A[i][j] + B[i][j];
+        double[][] result = new double[r1][c1];
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c1; j++) {
+                result[i][j] = m1[i][j] + m2[i][j];
+            }
+        }
 
         System.out.println("The result is:");
         printMatrix(result);
     }
 
-
-    private static void multiplyMatrixByConstant(Scanner scanner) {
+    // --- Multiply by constant ---
+    private static void multiplyByConstant(Scanner scanner) {
         System.out.print("Enter size of matrix: > ");
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
-        System.out.println("Enter matrix:");
-        double[][] matrix = readMatrix(scanner, n, m);
+        int r = scanner.nextInt();
+        int c = scanner.nextInt();
+        double[][] matrix = readMatrix(scanner, r, c, "");
 
         System.out.print("Enter constant: > ");
         double k = scanner.nextDouble();
 
-        double[][] result = new double[n][m];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
+        double[][] result = new double[r][c];
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
                 result[i][j] = matrix[i][j] * k;
+            }
+        }
 
         System.out.println("The result is:");
         printMatrix(result);
     }
 
-
+    // --- Multiply matrices ---
     private static void multiplyMatrices(Scanner scanner) {
         System.out.print("Enter size of first matrix: > ");
-        int n1 = scanner.nextInt();
-        int m1 = scanner.nextInt();
-        System.out.println("Enter first matrix:");
-        double[][] A = readMatrix(scanner, n1, m1);
+        int r1 = scanner.nextInt();
+        int c1 = scanner.nextInt();
+        double[][] m1 = readMatrix(scanner, r1, c1, "first");
 
         System.out.print("Enter size of second matrix: > ");
-        int n2 = scanner.nextInt();
-        int m2 = scanner.nextInt();
-        System.out.println("Enter second matrix:");
-        double[][] B = readMatrix(scanner, n2, m2);
+        int r2 = scanner.nextInt();
+        int c2 = scanner.nextInt();
+        double[][] m2 = readMatrix(scanner, r2, c2, "second");
 
-        if (m1 != n2) {
+        if (c1 != r2) {
             System.out.println("The operation cannot be performed.");
             return;
         }
 
-        double[][] result = new double[n1][m2];
-        for (int i = 0; i < n1; i++)
-            for (int j = 0; j < m2; j++)
-                for (int k = 0; k < m1; k++)
-                    result[i][j] += A[i][k] * B[k][j];
+        double[][] result = new double[r1][c2];
+        for (int i = 0; i < r1; i++) {
+            for (int j = 0; j < c2; j++) {
+                for (int k = 0; k < c1; k++) {
+                    result[i][j] += m1[i][k] * m2[k][j];
+                }
+            }
+        }
 
         System.out.println("The result is:");
         printMatrix(result);
     }
 
-
+    // --- Transpose ---
     private static void transposeMatrix(Scanner scanner) {
-        System.out.println("1. Main diagonal");
-        System.out.println("2. Side diagonal");
-        System.out.println("3. Vertical line");
-        System.out.println("4. Horizontal line");
+        System.out.println("""
+                1. Main diagonal
+                2. Side diagonal
+                3. Vertical line
+                4. Horizontal line""");
         System.out.print("Your choice: > ");
         int option = scanner.nextInt();
 
         System.out.print("Enter matrix size: > ");
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
-        System.out.println("Enter matrix:");
-        double[][] matrix = readMatrix(scanner, n, m);
+        int r = scanner.nextInt();
+        int c = scanner.nextInt();
+        double[][] matrix = readMatrix(scanner, r, c, "");
 
-        double[][] result;
+        double[][] result = new double[c][r];
 
         switch (option) {
-            case 1 -> result = transposeMainDiagonal(matrix);
-            case 2 -> result = transposeSideDiagonal(matrix);
-            case 3 -> result = transposeVertical(matrix);
-            case 4 -> result = transposeHorizontal(matrix);
+            case 1 -> { // main diagonal
+                for (int i = 0; i < r; i++)
+                    for (int j = 0; j < c; j++)
+                        result[j][i] = matrix[i][j];
+            }
+            case 2 -> { // side diagonal
+                for (int i = 0; i < r; i++)
+                    for (int j = 0; j < c; j++)
+                        result[c - 1 - j][r - 1 - i] = matrix[i][j];
+            }
+            case 3 -> { // vertical line
+                for (int i = 0; i < r; i++)
+                    for (int j = 0; j < c; j++)
+                        result[i][c - 1 - j] = matrix[i][j];
+            }
+            case 4 -> { // horizontal line
+                for (int i = 0; i < r; i++)
+                    for (int j = 0; j < c; j++)
+                        result[r - 1 - i][j] = matrix[i][j];
+            }
             default -> {
-                System.out.println("Invalid option.");
+                System.out.println("Invalid choice.");
                 return;
             }
         }
@@ -143,69 +164,75 @@ public class MatrixProcessing {
         printMatrix(result);
     }
 
+    // --- Determinant ---
+    private static void calculateDeterminant(Scanner scanner) {
+        System.out.print("Enter matrix size: > ");
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
 
-    private static double[][] transposeMainDiagonal(double[][] matrix) {
-        int n = matrix.length, m = matrix[0].length;
-        double[][] result = new double[m][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                result[j][i] = matrix[i][j];
-        return result;
+        if (n != m) {
+            System.out.println("The operation cannot be performed.");
+            return;
+        }
+
+        double[][] matrix = readMatrix(scanner, n, m, "");
+        double det = determinant(matrix);
+        System.out.println("The result is:");
+        System.out.println((det % 1 == 0) ? (int) det : det);
     }
 
+    // Recursive determinant
+    private static double determinant(double[][] matrix) {
+        int n = matrix.length;
 
-    private static double[][] transposeSideDiagonal(double[][] matrix) {
-        int n = matrix.length, m = matrix[0].length;
-        double[][] result = new double[m][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                result[m - j - 1][n - i - 1] = matrix[i][j];
-        return result;
+        if (n == 1)
+            return matrix[0][0];
+        if (n == 2)
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+        double det = 0;
+        for (int col = 0; col < n; col++) {
+            det += Math.pow(-1, col) * matrix[0][col] * determinant(minor(matrix, 0, col));
+        }
+        return det;
     }
 
-
-    private static double[][] transposeVertical(double[][] matrix) {
-        int n = matrix.length, m = matrix[0].length;
-        double[][] result = new double[n][m];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                result[i][m - j - 1] = matrix[i][j];
-        return result;
+    private static double[][] minor(double[][] matrix, int row, int col) {
+        int n = matrix.length;
+        double[][] minor = new double[n - 1][n - 1];
+        int r = 0;
+        for (int i = 0; i < n; i++) {
+            if (i == row) continue;
+            int c = 0;
+            for (int j = 0; j < n; j++) {
+                if (j == col) continue;
+                minor[r][c++] = matrix[i][j];
+            }
+            r++;
+        }
+        return minor;
     }
 
-
-    private static double[][] transposeHorizontal(double[][] matrix) {
-        int n = matrix.length, m = matrix[0].length;
-        double[][] result = new double[n][m];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                result[n - i - 1][j] = matrix[i][j];
-        return result;
-    }
-
-
-    private static double[][] readMatrix(Scanner scanner, int n, int m) {
-        double[][] matrix = new double[n][m];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
+    // --- Helpers ---
+    private static double[][] readMatrix(Scanner scanner, int rows, int cols, String name) {
+        if (!name.isEmpty()) System.out.println("Enter " + name + " matrix:");
+        else System.out.println("Enter matrix:");
+        double[][] matrix = new double[rows][cols];
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
                 matrix[i][j] = scanner.nextDouble();
         return matrix;
     }
 
     private static void printMatrix(double[][] matrix) {
         for (double[] row : matrix) {
-            for (int j = 0; j < row.length; j++) {
-                System.out.print(removeTrailingZeros(row[j]));
-                if (j < row.length - 1) System.out.print(" ");
+            for (double val : row) {
+                if (val % 1 == 0)
+                    System.out.print((int) val + " ");
+                else
+                    System.out.print(val + " ");
             }
             System.out.println();
         }
-    }
-
-    private static String removeTrailingZeros(double value) {
-        if (value == (long) value)
-            return String.format("%d", (long) value);
-        else
-            return String.format("%s", value);
     }
 }
