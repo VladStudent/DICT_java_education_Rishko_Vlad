@@ -1,25 +1,27 @@
 package RockPaperScissors;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class RockPaperScissors {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        String[] options = {"rock", "paper", "scissors"};
         String userChoice = scanner.nextLine();
+        String computerChoice = options[random.nextInt(options.length)];
 
-        String computerChoice = "";
-        switch (userChoice) {
-            case "rock":
-                computerChoice = "paper";
-                break;
-            case "paper":
-                computerChoice = "scissors";
-                break;
-            case "scissors":
-                computerChoice = "rock";
-                break;
+        if (userChoice.equals(computerChoice)) {
+            System.out.println("There is a draw (" + computerChoice + ")");
+        } else if (
+                (userChoice.equals("rock") && computerChoice.equals("scissors")) ||
+                        (userChoice.equals("paper") && computerChoice.equals("rock")) ||
+                        (userChoice.equals("scissors") && computerChoice.equals("paper"))
+        ) {
+            System.out.println("Well done. The computer chose " + computerChoice + " and failed");
+        } else {
+            System.out.println("Sorry, but the computer chose " + computerChoice);
         }
-
-        System.out.println("Sorry, but the computer chose " + computerChoice);
     }
 }
