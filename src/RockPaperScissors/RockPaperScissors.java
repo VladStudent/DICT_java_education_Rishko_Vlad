@@ -9,19 +9,41 @@ public class RockPaperScissors {
         Random random = new Random();
 
         String[] options = {"rock", "paper", "scissors"};
-        String userChoice = scanner.nextLine();
-        String computerChoice = options[random.nextInt(options.length)];
 
-        if (userChoice.equals(computerChoice)) {
-            System.out.println("There is a draw (" + computerChoice + ")");
-        } else if (
-                (userChoice.equals("rock") && computerChoice.equals("scissors")) ||
-                        (userChoice.equals("paper") && computerChoice.equals("rock")) ||
-                        (userChoice.equals("scissors") && computerChoice.equals("paper"))
-        ) {
-            System.out.println("Well done. The computer chose " + computerChoice + " and failed");
-        } else {
-            System.out.println("Sorry, but the computer chose " + computerChoice);
+        while (true) {
+            String userChoice = scanner.nextLine();
+
+            if (userChoice.equals("!exit")) {
+                System.out.println("Bye!");
+                break;
+            }
+
+            boolean valid = false;
+            for (String opt : options) {
+                if (opt.equals(userChoice)) {
+                    valid = true;
+                    break;
+                }
+            }
+
+            if (!valid) {
+                System.out.println("Invalid input");
+                continue;
+            }
+
+            String computerChoice = options[random.nextInt(options.length)];
+
+            if (userChoice.equals(computerChoice)) {
+                System.out.println("There is a draw (" + computerChoice + ")");
+            } else if (
+                    (userChoice.equals("rock") && computerChoice.equals("scissors")) ||
+                            (userChoice.equals("paper") && computerChoice.equals("rock")) ||
+                            (userChoice.equals("scissors") && computerChoice.equals("paper"))
+            ) {
+                System.out.println("Well done. The computer chose " + computerChoice + " and failed");
+            } else {
+                System.out.println("Sorry, but the computer chose " + computerChoice);
+            }
         }
     }
 }
