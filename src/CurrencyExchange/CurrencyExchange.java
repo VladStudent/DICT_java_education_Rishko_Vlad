@@ -19,7 +19,6 @@ public class CurrencyExchange {
         System.out.print("Enter your base currency: ");
         String base = scanner.next().toLowerCase();
 
-        // Перші два курси одразу додаємо
         cache.put("usd", loadRate(base, "usd"));
         cache.put("eur", loadRate(base, "eur"));
 
