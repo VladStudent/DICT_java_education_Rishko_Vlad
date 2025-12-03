@@ -1,43 +1,51 @@
 package WebPageScraper;
 
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class WebPageScraper {
 
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
 
-        System.out.print("Input the URL: ");
-        String url = sc.nextLine();
+        String url = "https://www.nature.com/nature/articles?sort=PubDate&year=2023&page=2";
 
-        Connection.Response response;
+        Document doc = Jsoup.connect(url).get();
+        Elements articles = doc.select("article");
 
-        try {
-            response = Jsoup.connect(url)
-                    .ignoreContentType(true)
-                    .execute();
-        } catch (IOException e) {
-            System.out.println("The URL returned error!");
-            return;
+        for (Element article : articles) {
+
+            Element typeSpan = article.selectFirst("span[data-test='article.type']");
+            if (typeSpan == null) continue;
+
+            String type = typeSpan.text();
+
+            if (!type.equalsIgnoreCase("News")) continue;
+
+            Element link = article.selectFirst("a[data-track-action='view article']");
+            if (link == null) continue;
+
+            String articleUrl = "https://www.nature.com" + link.attr("href");
+
+            Document articleDoc = Jsoup.connect(articleUrl).get();
+
+            Element body = articleDoc.selectFirst("div[class*=body]");
+            if (body == null) continue;
+
+            String title = articleDoc.selectFirst("title").text();
+
+            String safeName = title
+                    .replaceAll("[^a-zA-Z0-9 ]", "")
+                    .replace(" ", "_") + ".txt";
+
+            try (FileOutputStream fos = new FileOutputStream(safeName)) {
+                fos.write(body.text().getBytes("UTF-8"));
+            }
+
+            System.out.println("Saved: " + safeName);
         }
-
-        int status = response.statusCode();
-
-        if (status != 200) {
-            System.out.println("The URL returned " + status + "!");
-            return;
-        }
-
-        byte[] data = response.bodyAsBytes();
-
-        try (FileOutputStream fos = new FileOutputStream("source.html")) {
-            fos.write(data);
-        }
-
-        System.out.println("Content saved.");
     }
 }
