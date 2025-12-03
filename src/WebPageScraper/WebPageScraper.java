@@ -4,48 +4,69 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class WebPageScraper {
 
     public static void main(String[] args) throws IOException {
+        Scanner sc = new Scanner(System.in);
 
-        String url = "https://www.nature.com/nature/articles?sort=PubDate&year=2023&page=2";
+        System.out.print("Enter pages count: ");
+        int pages = sc.nextInt();
+        sc.nextLine();
 
-        Document doc = Jsoup.connect(url).get();
-        Elements articles = doc.select("article");
+        System.out.print("Enter article type: ");
+        String typeInput = sc.nextLine();
 
-        for (Element article : articles) {
+        for (int i = 1; i <= pages; i++) {
 
-            Element typeSpan = article.selectFirst("span[data-test='article.type']");
-            if (typeSpan == null) continue;
+            String url = "https://www.nature.com/nature/articles?sort=PubDate&year=2023&page=" + i;
 
-            String type = typeSpan.text();
+            Document doc = Jsoup.connect(url).get();
+            Elements articles = doc.select("article");
 
-            if (!type.equalsIgnoreCase("News")) continue;
+            File folder = new File("Page_" + i);
+            folder.mkdir();
 
-            Element link = article.selectFirst("a[data-track-action='view article']");
-            if (link == null) continue;
+            for (Element article : articles) {
 
-            String articleUrl = "https://www.nature.com" + link.attr("href");
+                Element typeSpan = article.selectFirst("span[data-test='article.type']");
+                if (typeSpan == null) continue;
 
-            Document articleDoc = Jsoup.connect(articleUrl).get();
+                String articleType = typeSpan.text();
 
-            Element body = articleDoc.selectFirst("div[class*=body]");
-            if (body == null) continue;
+                if (!articleType.equalsIgnoreCase(typeInput)) continue;
 
-            String title = articleDoc.selectFirst("title").text();
+                Element link = article.selectFirst("a[data-track-action='view article']");
+                if (link == null) continue;
 
-            String safeName = title
-                    .replaceAll("[^a-zA-Z0-9 ]", "")
-                    .replace(" ", "_") + ".txt";
+                String articleUrl = "https://www.nature.com" + link.attr("href");
 
-            try (FileOutputStream fos = new FileOutputStream(safeName)) {
-                fos.write(body.text().getBytes("UTF-8"));
+                Document articleDoc = Jsoup.connect(articleUrl).get();
+
+                Element body = articleDoc.selectFirst("div[class*=body]");
+                if (body == null) continue;
+
+                String title = articleDoc.selectFirst("title").text();
+
+                String safeName = title
+                        .replaceAll("[^a-zA-Z0-9 ]", "")
+                        .replace(" ", "_") + ".txt";
+
+                File outFile = new File(folder, safeName);
+
+                try (FileOutputStream fos = new FileOutputStream(outFile)) {
+                    fos.write(body.text().getBytes("UTF-8"));
+                }
+
+                System.out.println("Saved: " + folder.getName() + "/" + safeName);
             }
-
-            System.out.println("Saved: " + safeName);
         }
+
+        System.out.println("Saved all articles");
     }
 }
